@@ -1,4 +1,8 @@
-Syntax Regex extract comment in kenh14.vn: "<span id=\"\\w{1,}\\s{0,}\">\\s(.+?)\\s</span>"
+Syntax Regex extract comment in kenh14.vn: 
+"<span id=\"\\w{1,}\\s{0,}\">\\s(.+?)\\s</span>"
+">\\s(.+?)\\s</"
+"\\s(.+?){1,}\\s|<"
 Ex: 
 String html = "<div class=\"cent-cont\"> <div class=\"item-info\"> <a class=\"full-name\" title=\"\" target=\"_blank\" href=\"http://vietid.net/click.php?id=MTYwMzI5MzM2&amp;c=638b52d3753d0f52c7511f2acae9b8c2\">Giap Anh</a> · <span class=\"time-ago\">09h29, ngày 29-08-2017</span> <span class=\"city\" id=\"city_59a4d1745b4c49680bfc8a6a_9\">  </span>  </div> <div class=\"cm-content\"> <span id=\"com_content_59a4d1745b4c49680bfc8a6a\"> thấy báo chí tung hô là đáng sợ lắm, đi xem thử, lần đầu tiên đi xem phim kinh dị cũng thấy hết sức bình thường thôi, còn ám ảnh sau phim thì đánh giá ở mức độ 1* </span> <input id=\"content_hidden_59a4d1745b4c49680bfc8a6a\" value=\"thấy báo chí tung hô là đáng sợ lắm, đi xem thử, lần đầu tiên đi xem phim kinh dị cũng thấy hết sức bình thường thôi, còn ám ảnh sau phim thì đánh giá ở mức độ 1*        \" type=\"hidden\"> </div> </div>";
 ---> <span id="com_content_59a4d1745b4c49680bfc8a6a"> thấy báo chí tung hô là đáng sợ lắm, đi xem thử, lần đầu tiên đi xem phim kinh dị cũng thấy hết sức bình thường thôi, còn ám ảnh sau phim thì đánh giá ở mức độ 1* </span>
+
