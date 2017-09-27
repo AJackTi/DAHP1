@@ -13,7 +13,7 @@ public class Get_web {
 		// TODO Auto-generated method stub
 		try {
             // get URL content
-
+		
             String urlStr="http://kenh14.vn/hot-mama-2017-se-duoc-to-chuc-tai-viet-nam-vao-25-11-20170910231849133.chn";
             URL url = new URL(urlStr);
             URLConnection conn = url.openConnection();
