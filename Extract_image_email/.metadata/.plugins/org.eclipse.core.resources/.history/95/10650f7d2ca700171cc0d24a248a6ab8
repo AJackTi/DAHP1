@@ -1,0 +1,125 @@
+package get_html_and_extract;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Extract_comment {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		// get html
+				URL url;
+				String content = "";
+				// Đây là 1 trang web nhánh của kenh14.vn chứa những comment(đăng ký, đăng nhập thông qua trang web này)
+				// Ở đây nhóm chưa làm được trích xuất hoàn toàn tất cả các thẻ của website này, mà chỉ xem trong web này có chứa web này, 
+				//  nên nhóm quyết định lấy trang này chỉ để trích xuất các comment ra thôi. 
+				// Còn riêng phần trích xuất các phần khác(số điện thoại, email, ... ) thì nhóm sẽ lấy website kenh14.vn để trích xuất.
+				
+				String link = "https://comment.vietid.net/comments?app_key=d9c694bd04eb35d96f1d71a84141d075&content_url=http://kenh14.vn/news-20170910231849133.chn&news_title=SE9UOiBNQU1BIDIwMTcgc%2bG6vSDEkcaw4bujYyB04buVIGNo4bupYyB04bqhaSBWaeG7h3QgTmFtIHbDoG8gMjUvMTEh&num_count=5&debugcache=1&min=0&scroll=0&http_referer=http://kenh14.vn/hot-mama-2017-se-duoc-to-chuc-tai-viet-nam-vao-25-11-20170910231849133.chn&verify=1&verify_flag=17db33bd9de68488adfcf7c9dfbfd975&funny_flag=0&height=238&iframe_comment_id=mingid_comment_iframe&comment_flag=0&news_url_short=musik&real_time=undefined&is_hidden_comment=0";
+				// Link gốc chứa trang comment này(kenh14.vn): http://kenh14.vn/hot-mama-2017-se-duoc-to-chuc-tai-viet-nam-vao-25-11-20170910231849133.chn
+				// Ta cũng có thay thế bằng 1 link khác cũng được.
+				// VD:
+				// String Str_link = "https://comment.vietid.net/comments?app_key=d9c694bd04eb35d96f1d71a84141d075&content_url=http://kenh14.vn/news-20170927094249086.chn&news_title=TuG7ryBzaW5oIEjhuqNpIETGsMahbmcgYuG7iyBi4bqhbiBiw6ggdHLDqnUgY2jhu41jLCBjaMawYSB04burbmcgbeG6t2Mgw6FvIGTDoGkgdsOsIHPhu5EgxJFvIHbDsm5nIDEgaMahbiAxMDBjbQ%3d%3d&num_count=5&debugcache=1&min=0&scroll=0&http_referer=http://kenh14.vn/nu-sinh-hai-duong-bi-ban-be-treu-choc-chua-tung-mac-ao-dai-vi-so-do-vong-1-hon-100cm-20170927094249086.chn&verify=1&verify_flag=a2e2de62655e36d81aced341c757c390&funny_flag=0&height=238&iframe_comment_id=mingid_comment_iframe&comment_flag=0&news_url_short=doi-song&real_time=undefined&is_hidden_comment=0"
+				try {
+					url = new URL(link);
+					
+					URLConnection connection = url.openConnection();
+					
+					InputStream inputStream = connection.getInputStream();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+					
+					String line = br.readLine();
+								
+					while(line !=null) {
+						content += line;
+						line = br.readLine();
+					}
+					br.close();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				// Trích xuất comment được top bình luận:
+				String patternt = "<div class=\"cm-content\">\\s{1,}[^<](.+?)</div>";
+				Pattern pt = Pattern.compile(patternt);
+				Matcher mt = pt.matcher(content);
+				ArrayList<String> arr_top1 = new ArrayList<>();
+				while (mt.find()) {
+					arr_top1.add(mt.group(0));
+				}
+				
+				ArrayList<String> arr_top2 = new ArrayList<>();
+				for (String string : arr_top1) {
+					patternt = ">(.+?){2,}<";
+					pt = Pattern.compile(patternt);
+					mt = pt.matcher(string);
+					while (mt.find()) {
+						arr_top2.add(mt.group(0));
+					}
+				}
+				
+				ArrayList<String> arr_top3 = new ArrayList<>();
+				for (String string : arr_top2) {
+					patternt = "\\s{1}(.+?){5,5000}\\s";
+					pt = Pattern.compile(patternt);
+					mt = pt.matcher(string);
+					while (mt.find()) {
+						arr_top3.add(mt.group(0));
+					}
+				}
+				
+				
+				// Nhóm chia làm 3 tương ứng với 3 pattern phần để lọc ra các comment(dựa vào cấu trúc của các tag html trong trang web này)
+				// Đây là pattern 1
+				/*String pattern = "<span id=\"\\w{1,}\\s{0,}\">\\s(.+?)\\s</span>";
+				Pattern p = Pattern.compile(pattern);
+				Matcher m = p.matcher(content);
+				String cmString = null;
+				while(m.find())
+				{
+					cmString += m.group(0);
+				}
+				
+				// Đây là pattern 2
+				pattern = ">\\s(.+?)\\s</";
+				p = Pattern.compile(pattern);
+				m = p.matcher(cmString);
+				String cmString2 = "";
+				ArrayList<String> arr_list1 = new ArrayList<>();
+				while(m.find())
+				{
+					cmString2 = m.group(0);
+					arr_list1.add(cmString2);
+					cmString2 = "";
+				}		
+				
+				// Đây là pattern 2
+				String pat = "\\s(.+?){1,}\\s";
+				p = Pattern.compile(pat);
+				String cmString3 = "";
+				ArrayList<String> arr_list2 = new ArrayList<>();
+				for (String string : arr_list1) {
+					m = p.matcher(string);
+					while(m.find())
+					{
+						arr_list2.add(m.group(0));
+					}
+				}
+				
+				System.out.println("Kết quả sau khi lọc tất cả comment: ");
+				// Đây là kết quả sau khi lọc ra các comment.
+				// Có 1 lưu ý nhỏ ở đây là: có 1 vài comment có chứa lẫn thẻ <img src="">, đây là cũng là comment của khách, thẻ này là do khách comment icon nên dính vào comment không thể tách ra riêng được.
+				for (String string : arr_list2) {
+					System.out.println(string);
+				}*/
+			}
+}
